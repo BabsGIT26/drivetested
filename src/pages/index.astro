@@ -31,7 +31,8 @@ const jsonLd = [
       <h1>Tested car gear,<br />clearly explained.</h1>
       <p class="lede">Straight answers on jump starters, tire inflators, dash cams, floor mats and the rest of the gear that keeps your car ready. What the specs mean, what to skip, and which one to buy.</p>
       <div class="hero-cta">
-        <a class="btn-ghost" href="/jump-starters/best-with-air-compressor/">Best jump starters with air compressors →</a>
+        <a class="btn-ghost" href="/dash-cams/best-front-and-rear/">Best front and rear dash cams →</a>
+        <a class="text-link ui" href="/jump-starters/best-jump-starters/">Best jump starters</a>
         <a class="text-link ui" href="/how-we-test/">How we test</a>
       </div>
     </div>
@@ -41,7 +42,7 @@ const jsonLd = [
     <section aria-labelledby="latest">
       <h2 id="latest">Latest guides</h2>
       <div class="grid">
-        {articles.slice(0, 6).map((a) => (
+        {articles.slice(0, 9).map((a) => (
           <ArticleCard title={a.data.title} description={a.data.description} href={`/${a.data.category}/${a.data.slug}/`} category={a.data.category} date={a.data.updatedDate ?? a.data.pubDate} />
         ))}
       </div>
