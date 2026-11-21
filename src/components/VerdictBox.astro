@@ -1,7 +1,7 @@
 ---
 import AmazonButton from './AmazonButton.astro';
 
-interface Pick { label: string; product: { id: string; name: string; asin: string } }
+interface Pick { label: string; product: { id: string; name: string; asin?: string; amazonSearch?: string; score?: number } }
 interface Props { summary: string; picks: Pick[] }
 const { summary, picks } = Astro.props;
 ---
@@ -15,9 +15,9 @@ const { summary, picks } = Astro.props;
         <li>
           <div class="pick-text">
             <span class="label">{p.label}</span>
-            <a class="name" href={`#${p.product.id}`}>{p.product.name}</a>
+            <a class="name" href={`#${p.product.id}`}>{p.product.name}{typeof p.product.score === 'number' && <span class="sc"> · {p.product.score.toFixed(1)}/10</span>}</a>
           </div>
-          <AmazonButton asin={p.product.asin} size="sm" productName={p.product.name} />
+          <AmazonButton asin={p.product.asin} search={p.product.amazonSearch} size="sm" productName={p.product.name} />
         </li>
       ))}
     </ol>
@@ -34,5 +34,6 @@ const { summary, picks } = Astro.props;
   .label { font-family: var(--font-head); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--steel); font-weight: 600; }
   .name { font-family: var(--font-head); font-weight: 650; font-size: 1rem; text-decoration: none; }
   .name:hover { text-decoration: underline; }
+  .sc { color: var(--steel); font-weight: 600; }
   @media (min-width: 640px) { .verdict { padding: 1.75rem; } }
 </style>

@@ -1,10 +1,14 @@
 ---
 import AmazonButton from './AmazonButton.astro';
 
-interface Product { id: string; name: string; asin: string; award?: string; specs: { label: string; value: string }[] }
+interface Product { id: string; name: string; asin?: string; amazonSearch?: string; award?: string; score?: number; specs: { label: string; value: string }[] }
 interface Props { products: Product[]; columns: string[]; caption?: string }
-const { products, columns, caption = 'Side-by-side comparison (manufacturer-listed specs)' } = Astro.props;
+const { products, columns } = Astro.props;
 const val = (p: Product, label: string) => p.specs.find((s) => s.label === label)?.value ?? '—';
+const hasScore = products.some((p) => typeof p.score === 'number');
+const caption = Astro.props.caption ?? (hasScore
+  ? 'Side-by-side comparison. Score = DriveTested research score out of 10 (not a hands-on rating). Specs are manufacturer-listed unless noted.'
+  : 'Side-by-side comparison (manufacturer-listed specs)');
 ---
 <figure class="compare">
   <div class="scroll" role="region" aria-label={caption} tabindex="0">
@@ -13,6 +17,7 @@ const val = (p: Product, label: string) => p.specs.find((s) => s.label === label
       <thead>
         <tr>
           <th scope="col">Model</th>
+          {hasScore && <th scope="col">Score</th>}
           {columns.map((c) => <th scope="col">{c}</th>)}
           <th scope="col"><span class="sr-only">Price</span></th>
         </tr>
@@ -24,8 +29,9 @@ const val = (p: Product, label: string) => p.specs.find((s) => s.label === label
               {p.award && <span class="award">{p.award}</span>}
               <a href={`#${p.id}`}>{p.name}</a>
             </th>
+            {hasScore && <td class="score">{typeof p.score === 'number' ? <><strong>{p.score.toFixed(1)}</strong>/10</> : '—'}</td>}
             {columns.map((c) => <td>{val(p, c)}</td>)}
-            <td class="cta"><AmazonButton asin={p.asin} size="sm" productName={p.name} /></td>
+            <td class="cta"><AmazonButton asin={p.asin} search={p.amazonSearch} size="sm" productName={p.name} label={p.asin ? 'Check price' : 'Check fit'} /></td>
           </tr>
         ))}
       </tbody>
@@ -44,5 +50,7 @@ const val = (p: Product, label: string) => p.specs.find((s) => s.label === label
   tbody th a { text-decoration: none; }
   .award { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); font-weight: 600; margin-bottom: 0.15rem; }
   .cta { text-align: right; }
+  .score { white-space: nowrap; color: var(--steel); }
+  .score strong { color: var(--text); font-size: 1rem; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 </style>
