@@ -5,7 +5,7 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="wrap grid">
     <div>
-      <p class="brand">DriveTested</p>
+      <p class="brand">Drive<span>Tested</span></p>
       <p class="ui-small">{SITE.tagline}.</p>
       <p class="ui-small disclosure">
         As an Amazon Associate I earn from qualifying purchases. When you buy through links on this site,
@@ -31,16 +31,29 @@ const year = new Date().getFullYear();
 </footer>
 
 <style>
-  .site-footer { margin-top: clamp(3rem, 8vw, 5rem); border-top: 1px solid var(--line); padding: clamp(2rem, 5vw, 3rem) 0 2rem; background: var(--surface); }
-  .disclosure a { color: var(--steel); }
+  .site-footer {
+    margin-top: clamp(3rem, 8vw, 5rem); padding: clamp(2.25rem, 5vw, 3.25rem) 0 2rem; color: #cbd5e1;
+    background: radial-gradient(60rem 20rem at 85% -10%, rgba(37, 99, 235, .25), transparent 60%), var(--navy);
+    position: relative;
+  }
+  .site-footer::before {
+    content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px;
+    background: repeating-linear-gradient(90deg, var(--amber) 0 28px, transparent 28px 46px);
+    opacity: .9;
+  }
+  .site-footer :focus-visible { outline-color: #fbbf24; }
   .grid { display: grid; gap: 2rem; grid-template-columns: 1fr; }
-  .brand { font-family: var(--font-head); font-weight: 800; font-size: 1.1rem; margin: 0 0 0.25rem; }
+  .brand { font-family: var(--font-head); font-weight: 800; font-size: 1.2rem; margin: 0 0 0.25rem; color: #fff; }
+  .brand span { color: #93c5fd; font-weight: 500; }
+  .site-footer .ui-small { color: #cbd5e1; }
+  .site-footer .eyebrow { color: #fbbf24; }
   .disclosure { max-width: 28rem; }
+  .disclosure a { color: #fff; }
   ul { list-style: none; padding: 0; margin: 0.5rem 0 0; }
   li { margin: 0; }
-  nav a { display: inline-flex; align-items: center; min-height: 2.5rem; font-family: var(--font-head); font-size: 0.92rem; text-decoration: none; color: var(--steel); }
-  nav a:hover { color: var(--text); }
-  .legal { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+  nav a { display: inline-flex; align-items: center; min-height: 2.5rem; font-family: var(--font-head); font-size: 0.92rem; text-decoration: none; color: #cbd5e1; }
+  nav a:hover { color: #fff; text-decoration: underline; text-decoration-color: var(--amber); }
+  .legal { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,.12); }
   @media (min-width: 480px) { .grid { grid-template-columns: 1fr 1fr; } .grid > div:first-child { grid-column: 1 / -1; } }
   @media (min-width: 820px) { .grid { grid-template-columns: 2fr 1fr 1fr; } .grid > div:first-child { grid-column: auto; } }
 </style>
