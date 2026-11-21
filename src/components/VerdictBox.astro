@@ -1,5 +1,6 @@
 ---
 import AmazonButton from './AmazonButton.astro';
+import { scoreTier } from '../lib/score';
 
 interface Pick { label: string; product: { id: string; name: string; asin?: string; amazonSearch?: string; score?: number } }
 interface Props { summary: string; picks: Pick[] }
@@ -15,7 +16,8 @@ const { summary, picks } = Astro.props;
         <li>
           <div class="pick-text">
             <span class="label">{p.label}</span>
-            <a class="name" href={`#${p.product.id}`}>{p.product.name}{typeof p.product.score === 'number' && <span class="sc"> · {p.product.score.toFixed(1)}/10</span>}</a>
+            {typeof p.product.score === 'number' && <span class:list={['tier', 'sc', scoreTier(p.product.score).cls]}>{p.product.score.toFixed(1)}/10</span>}
+            <a class="name" href={`#${p.product.id}`}>{p.product.name}</a>
           </div>
           <AmazonButton asin={p.product.asin} search={p.product.amazonSearch} size="sm" productName={p.product.name} />
         </li>
@@ -24,19 +26,26 @@ const { summary, picks } = Astro.props;
   )}
 </section>
 <style>
-  .verdict { padding: 1.15rem; margin: 1.5rem 0 2rem; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
-  .verdict .eyebrow { margin: 0; }
+  .verdict {
+    position: relative; padding: 1.15rem; margin: 1.5rem 0 2rem; overflow: hidden;
+    background: linear-gradient(180deg, var(--blue-50), #fff 9rem); border: 1px solid #c9dafc;
+  }
+  .verdict::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 5px; background: linear-gradient(90deg, var(--blue), var(--amber)); }
+  .verdict .eyebrow { margin: 0.25rem 0 0; }
+  .verdict h2 { color: var(--navy); }
   .verdict h2 { margin: 0.15rem 0 0.5rem; font-size: 1.35rem; }
   .summary { margin: 0 0 1rem; }
-  .picks { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .picks { list-style: none; margin: 0; padding: 0; border-top: 1px solid #c9dafc; counter-reset: pick; }
   .picks li { display: grid; grid-template-columns: 1fr; gap: 0.6rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
   .picks li:last-child { border-bottom: 0; padding-bottom: 0; }
   .picks li :global(.amz-btn) { width: 100%; }
-  .pick-text { display: flex; flex-direction: column; min-width: 0; }
-  .label { font-family: var(--font-head); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--steel); font-weight: 600; }
+  .pick-text { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 0.75rem; align-items: center; min-width: 0; }
+  .pick-text .label { grid-column: 1; }
+  .pick-text .sc { grid-column: 2; grid-row: 1 / span 2; font-size: 0.85rem; }
+  .pick-text .name { grid-column: 1; }
+  .label { font-family: var(--font-head); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--blue-700); font-weight: 600; }
   .name { font-family: var(--font-head); font-weight: 650; font-size: 1rem; text-decoration: none; line-height: 1.35; }
   .name:hover { text-decoration: underline; }
-  .sc { color: var(--steel); font-weight: 600; white-space: nowrap; }
   @media (min-width: 560px) {
     .picks li { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1rem; }
     .picks li :global(.amz-btn) { width: auto; }

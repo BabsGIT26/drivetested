@@ -35,7 +35,13 @@ const product = z
    * manufacturer specs, warranty terms and owner-review patterns. NOT a hands-on rating; never emitted as Review markup.
    */
   score: z.number().min(0).max(10).optional(),
+  /**
+   * Optional real product image URL (e.g. from Amazon SiteStripe / PA-API image links, which are allowed under the
+   * Associates agreement). When empty, the card shows an original category illustration instead.
+   */
   image: z.string().optional(),
+  /** Alt text for `image` (defaults to the product name). */
+  imageAlt: z.string().optional(),
   })
   .refine((p) => Boolean(p.asin || p.amazonSearch), { message: 'Each product needs an asin or an amazonSearch query' });
 

@@ -1,28 +1,51 @@
 ---
 import AmazonButton from './AmazonButton.astro';
+import Illustration from './Illustration.astro';
+import { PICK_ACCENTS, ILLUSTRATION_NOUN } from '../lib/illustrations';
+import { scoreTier, awardTone } from '../lib/score';
 
 interface Props {
   product: {
     id: string; name: string; brand: string; asin?: string; amazonSearch?: string; award?: string; bestFor: string; score?: number;
-    specs?: { label: string; value: string }[]; pros?: string[]; cons?: string[]; image?: string;
+    specs?: { label: string; value: string }[]; pros?: string[]; cons?: string[]; image?: string; imageAlt?: string;
   };
   rank?: number;
 }
 const { product: p, rank } = Astro.props;
+// Category comes from the URL (/{category}/{slug}/) so MDX <Pick> calls don't need to pass it.
+const kind = Astro.url.pathname.split('/').filter(Boolean)[0] ?? 'vehicle-guides';
+const idx = rank ? rank - 1 : [...p.id].reduce((a, c) => a + c.charCodeAt(0), 0);
+const accent = PICK_ACCENTS[idx % PICK_ACCENTS.length];
+const noun = (ILLUSTRATION_NOUN as Record<string, string>)[kind] ?? 'the product type';
+const tier = typeof p.score === 'number' ? scoreTier(p.score) : undefined;
+const tone = awardTone(p.award);
 ---
-<article class="product card" id={p.id}>
-  <header>
-    {p.award && <p class="eyebrow">{rank ? `${rank}. ` : ''}{p.award}</p>}
-    <h3>{p.name}</h3>
-    {typeof p.score === 'number' && (
-      <div class="score" title="DriveTested research score: based on published test results, specs, warranty and owner reviews. Not a hands-on rating.">
-        <p class="score-line"><span class="score-num">{p.score.toFixed(1)}</span><span class="score-of">/10</span> <span class="score-label">DriveTested score <span class="nowrap">(research-based)</span></span></p>
-        <span class="meter" aria-hidden="true"><span style={`width:${Math.max(0, Math.min(100, p.score * 10))}%`}></span></span>
-      </div>
-    )}
-    <p class="best-for ui-small"><strong>Best for:</strong> {p.bestFor}</p>
-  </header>
-  {p.image && <img src={p.image} alt={p.name} loading="lazy" width="480" height="360" />}
+<article class="product card" id={p.id} style={`--pick:${accent}`}>
+  <div class="top">
+    <figure class="media">
+      {p.image ? (
+        <img src={p.image} alt={p.imageAlt ?? p.name} loading="lazy" decoding="async" width="640" height="400" />
+      ) : (
+        <Illustration kind={kind} accent={accent} label={`Illustration of ${noun} (not a photo of the ${p.name})`} />
+      )}
+      {p.award && <span class:list={['ribbon', `r-${tone}`]}>{rank ? <b>#{rank}</b> : null}{p.award}</span>}
+      {!p.image && <figcaption class="illo-note">Illustration</figcaption>}
+    </figure>
+    <header>
+      {p.award && <p class="eyebrow sr-only">{rank ? `${rank}. ` : ''}{p.award}</p>}
+      <h3>{p.name}</h3>
+      {typeof p.score === 'number' && tier && (
+        <div class="score" title="DriveTested research score: based on published test results, specs, warranty and owner reviews. Not a hands-on rating.">
+          <p class="score-line">
+            <span class:list={['score-badge', tier.cls]}>{p.score.toFixed(1)}<small>/10</small></span>
+            <span class="score-meta"><strong class:list={['tier-word', tier.cls]}>{tier.label}</strong><span class="score-label">DriveTested score (research-based)</span></span>
+          </p>
+          <span class:list={['meter', tier.cls]} aria-hidden="true"><span style={`width:${Math.max(0, Math.min(100, p.score * 10))}%`}></span></span>
+        </div>
+      )}
+      <p class="best-for ui-small"><strong>Best for:</strong> {p.bestFor}</p>
+    </header>
+  </div>
   {p.specs && p.specs.length > 0 && (
     <dl class="specs">
       {p.specs.map((s) => (<div><dt>{s.label}</dt><dd>{s.value}</dd></div>))}
@@ -49,41 +72,73 @@ const { product: p, rank } = Astro.props;
   </div>
 </article>
 <style>
-  .product { padding: 1.15rem; margin: 2rem 0; scroll-margin-top: 6rem; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
-  header { margin-bottom: 1rem; }
+  .product { padding: 1rem; margin: 2rem 0; scroll-margin-top: 6rem; border-top: 4px solid var(--pick); }
+  .top { display: grid; gap: 1rem; margin-bottom: 1rem; }
+  .media { position: relative; margin: 0; border-radius: 10px; overflow: hidden; background: var(--bg); aspect-ratio: 16 / 10; }
+  .media img, .media :global(.illo), .media :global(svg) { width: 100%; height: 100%; object-fit: cover; }
+  .ribbon {
+    position: absolute; top: 0.6rem; left: 0; display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.3rem 0.75rem 0.3rem 0.6rem; font-family: var(--font-head); font-size: 0.75rem; font-weight: 800;
+    letter-spacing: 0.04em; text-transform: uppercase; color: #fff; border-radius: 0 999px 999px 0;
+    box-shadow: 0 4px 10px -4px rgba(0,0,0,.35); max-width: calc(100% - 1rem);
+  }
+  .ribbon b { background: rgba(255,255,255,.22); border-radius: 999px; padding: 0 0.4rem; }
+  .r-overall { background: var(--blue-700); }
+  .r-value { background: #15803d; }
+  .r-premium { background: #6d28d9; }
+  .r-other { background: var(--navy); }
+  .illo-note {
+    position: absolute; right: 0.5rem; bottom: 0.5rem; font-family: var(--font-head); font-size: 0.68rem; font-weight: 600;
+    color: var(--navy); background: rgba(255,255,255,.88); padding: 0.1rem 0.45rem; border-radius: 4px;
+  }
+  header { min-width: 0; }
   .eyebrow { margin: 0; }
   h3 { margin: 0.25rem 0 0.6rem; font-size: clamp(1.2rem, 1.05rem + 0.8vw, 1.45rem); }
-  .score { display: grid; gap: 0.35rem; margin: 0 0 0.75rem; max-width: 22rem; }
-  .score-line { margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 0.15rem; font-family: var(--font-head); font-size: 0.85rem; color: var(--steel); }
-  .score-num { font-weight: 800; font-size: 1.75rem; line-height: 1; color: var(--text); letter-spacing: -0.03em; }
-  .score-of { font-weight: 600; color: var(--steel); margin-right: 0.5rem; }
-  .nowrap { white-space: nowrap; }
+  .score { display: grid; gap: 0.45rem; margin: 0 0 0.75rem; max-width: 24rem; }
+  .score-line { margin: 0; display: flex; align-items: center; gap: 0.65rem; font-family: var(--font-head); }
+  .score-badge { display: inline-flex; align-items: baseline; color: #fff; font-weight: 800; font-size: 1.45rem; line-height: 1; padding: 0.45rem 0.6rem; border-radius: 10px; letter-spacing: -0.02em; }
+  .score-badge small { font-size: 0.75rem; font-weight: 700; opacity: .9; margin-left: 0.1rem; }
+  .score-badge.tier-a { background: #15803d; }
+  .score-badge.tier-b { background: #b45309; }
+  .score-badge.tier-c { background: #c2410c; }
+  .score-meta { display: flex; flex-direction: column; line-height: 1.25; }
+  .tier-word { font-size: 0.95rem; font-weight: 800; }
+  .tier-word.tier-a, .tier-word.tier-b, .tier-word.tier-c, .meter.tier-a, .meter.tier-b, .meter.tier-c { background: none; padding: 0; border-radius: 0; }
+  .meter.tier-a, .meter.tier-b, .meter.tier-c { background: var(--line); border-radius: 999px; }
+  .tier-word.tier-a { color: #15803d; }
+  .tier-word.tier-b { color: #b45309; }
+  .tier-word.tier-c { color: #c2410c; }
+  .score-label { font-size: 0.78rem; color: var(--steel); }
   .meter { display: block; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
-  .meter span { display: block; height: 100%; border-radius: inherit; background: var(--text); }
+  .meter span { display: block; height: 100%; border-radius: inherit; }
+  .meter.tier-a span { background: linear-gradient(90deg, #22c55e, #15803d); }
+  .meter.tier-b span { background: linear-gradient(90deg, #fbbf24, #b45309); }
+  .meter.tier-c span { background: linear-gradient(90deg, #fb923c, #c2410c); }
   .best-for { margin: 0; font-size: 0.92rem; }
-  .best-for strong { color: var(--text); font-weight: 600; }
+  .best-for strong { color: var(--text); font-weight: 700; }
   .fit-note { margin: 0.6rem 0 0; color: var(--steel); }
-  .specs { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); margin: 0 0 1rem; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .specs { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); margin: 0 0 1rem; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fafbfd; }
   .specs div { padding: 0.6rem 0.75rem; box-shadow: 1px 0 0 var(--line), 0 1px 0 var(--line); }
-  .specs dt { font-family: var(--font-head); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); }
+  .specs dt { font-family: var(--font-head); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--blue-700); font-weight: 600; }
   .specs dd { margin: 0.1rem 0 0; font-family: var(--font-head); font-size: 0.9rem; font-weight: 600; line-height: 1.35; }
   .pc { display: grid; gap: 0.75rem; grid-template-columns: 1fr; margin-bottom: 0.5rem; }
   .pc-box { border-radius: 8px; padding: 0.8rem 0.9rem; }
-  .pros-box { background: var(--good-bg); }
-  .cons-box { background: var(--bg); }
-  .pc-title { font-family: var(--font-head); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.35rem; }
-  .pros-box .pc-title { color: var(--good); }
-  .cons-box .pc-title { color: var(--steel); }
+  .pros-box { background: var(--good-bg); border-left: 3px solid #16a34a; }
+  .cons-box { background: #fff5f0; border-left: 3px solid #ea580c; }
+  .pc-title { font-family: var(--font-head); font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.35rem; }
+  .pros-box .pc-title { color: #15803d; }
+  .cons-box .pc-title { color: #c2410c; }
   .pc ul { list-style: none; padding: 0; margin: 0; font-size: 0.98rem; }
   .pc li { position: relative; padding-left: 1.4rem; margin: 0.4rem 0; line-height: 1.45; }
   .pros li::before, .cons li::before { position: absolute; left: 0; top: 0; font-family: var(--font-head); font-weight: 800; }
-  .pros li::before { content: '+'; color: var(--good); }
-  .cons li::before { content: '\2212'; color: var(--steel); }
+  .pros li::before { content: '+'; color: #15803d; }
+  .cons li::before { content: '\2212'; color: #c2410c; }
   .body :global(p) { margin: 0.75rem 0; }
   .cta-row { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
-  .cta-row :global(.amz-btn) { width: 100%; min-height: 50px; font-size: 1.02rem; }
+  .cta-row :global(.amz-btn) { width: 100%; min-height: 52px; font-size: 1.04rem; }
   @media (min-width: 640px) {
-    .product { padding: 1.75rem; }
+    .product { padding: 1.5rem; }
+    .top { grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); align-items: start; gap: 1.25rem; }
     .pc { grid-template-columns: 1fr 1fr; }
     .cta-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
     .cta-row :global(.amz-btn) { width: auto; min-width: 16rem; }
