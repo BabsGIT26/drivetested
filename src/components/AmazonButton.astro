@@ -3,17 +3,20 @@
  * The ONLY place the accent red is used: "Check price on Amazon".
  * Pass either an ASIN (preferred) or a full Amazon URL; the Associates tag is applied automatically.
  */
-import { amazonUrl, tagAmazonUrl } from '../site.config';
+import { amazonUrl, amazonSearchUrl, tagAmazonUrl } from '../site.config';
 
 interface Props {
   asin?: string;
+  /** Amazon search query, for vehicle-specific products. */
+  search?: string;
   href?: string;
   label?: string;
   size?: 'md' | 'sm';
   productName?: string;
 }
-const { asin, href, label = 'Check price on Amazon', size = 'md', productName } = Astro.props;
-const url = asin ? amazonUrl(asin) : href ? tagAmazonUrl(href) : '#';
+const { asin, search, href, size = 'md', productName } = Astro.props;
+const label = Astro.props.label ?? (search && !asin ? 'Check fit & price on Amazon' : 'Check price on Amazon');
+const url = asin ? amazonUrl(asin) : search ? amazonSearchUrl(search) : href ? tagAmazonUrl(href) : '#';
 ---
 <a
   class:list={['amz-btn', size]}

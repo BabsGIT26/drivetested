@@ -3,7 +3,7 @@ import AmazonButton from './AmazonButton.astro';
 
 interface Props {
   product: {
-    id: string; name: string; brand: string; asin: string; award?: string; bestFor: string;
+    id: string; name: string; brand: string; asin?: string; amazonSearch?: string; award?: string; bestFor: string; score?: number;
     specs?: { label: string; value: string }[]; pros?: string[]; cons?: string[]; image?: string;
   };
   rank?: number;
@@ -14,6 +14,11 @@ const { product: p, rank } = Astro.props;
   <header>
     {p.award && <p class="eyebrow">{rank ? `${rank}. ` : ''}{p.award}</p>}
     <h3>{p.name}</h3>
+    {typeof p.score === 'number' && (
+      <p class="score ui-small" title="DriveTested research score: based on published test results, specs, warranty and owner reviews. Not a hands-on rating.">
+        <span class="score-num">{p.score.toFixed(1)}</span><span class="score-of">/10</span> <span class="score-label">DriveTested score (research-based)</span>
+      </p>
+    )}
     <p class="best-for ui-small"><strong>Best for:</strong> {p.bestFor}</p>
   </header>
   {p.image && <img src={p.image} alt={p.name} loading="lazy" width="480" height="360" />}
@@ -38,13 +43,19 @@ const { product: p, rank } = Astro.props;
   </div>
   <div class="body"><slot /></div>
   <div class="cta-row">
-    <AmazonButton asin={p.asin} productName={p.name} />
+    <AmazonButton asin={p.asin} search={p.amazonSearch} productName={p.name} />
+    {!p.asin && p.amazonSearch && <p class="fit-note ui-small">Vehicle-specific: choose your exact year, make and model on Amazon and confirm the fit before you buy.</p>}
   </div>
 </article>
 <style>
   .product { padding: 1.25rem; margin: 2rem 0; scroll-margin-top: 6rem; }
   h3 { margin: 0.2rem 0 0.35rem; font-size: 1.35rem; }
   .best-for { margin: 0 0 1rem; }
+  .score { margin: 0 0 0.5rem; display: flex; align-items: baseline; gap: 0.15rem; flex-wrap: wrap; }
+  .score-num { font-family: var(--font-head); font-weight: 800; font-size: 1.5rem; color: var(--text); letter-spacing: -0.02em; }
+  .score-of { font-family: var(--font-head); font-weight: 600; color: var(--steel); margin-right: 0.5rem; }
+  .score-label { color: var(--steel); }
+  .fit-note { margin: 0.6rem 0 0; color: var(--steel); }
   .best-for strong { color: var(--text); font-weight: 600; }
   .specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 0 0 1rem; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
   .specs div { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); }

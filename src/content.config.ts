@@ -3,13 +3,20 @@ import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { CATEGORY_SLUGS } from './site.config';
 
-const product = z.object({
+const product = z
+  .object({
   /** Stable id used to reference the product inside the article body. */
   id: z.string(),
   name: z.string(),
   brand: z.string(),
   /** Amazon ASIN. The affiliate tag is added automatically from site.config.ts. */
-  asin: z.string().regex(/^[A-Z0-9]{10}$/, 'ASIN must be 10 uppercase letters/digits'),
+  asin: z.string().regex(/^[A-Z0-9]{10}$/, 'ASIN must be 10 uppercase letters/digits').optional(),
+  /**
+   * For vehicle-specific products (custom floor liners, custom seat covers) where every vehicle has its own ASIN:
+   * an Amazon search query. The button then links to a tagged Amazon search so readers can pick their exact vehicle.
+   * Provide either `asin` or `amazonSearch`.
+   */
+  amazonSearch: z.string().optional(),
   /** Short award label, e.g. "Best overall". */
   award: z.string().optional(),
   bestFor: z.string(),
@@ -23,8 +30,14 @@ const product = z.object({
    * AND the product has a rating.
    */
   rating: z.number().min(0).max(10).optional(),
+  /**
+   * DriveTested research score out of 10 (shown on the page). Based on published independent test results,
+   * manufacturer specs, warranty terms and owner-review patterns. NOT a hands-on rating; never emitted as Review markup.
+   */
+  score: z.number().min(0).max(10).optional(),
   image: z.string().optional(),
-});
+  })
+  .refine((p) => Boolean(p.asin || p.amazonSearch), { message: 'Each product needs an asin or an amazonSearch query' });
 
 const articles = defineCollection({
   loader: glob({ base: './src/content/articles', pattern: '**/*.{md,mdx}' }),

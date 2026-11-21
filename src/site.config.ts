@@ -34,6 +34,21 @@ export function amazonUrl(asin: string): string {
   return url.toString();
 }
 
+/** Build a tagged Amazon search link (used for vehicle-specific products that have one ASIN per vehicle). */
+export function amazonSearchUrl(query: string): string {
+  const url = new URL('/s', AMAZON_HOST);
+  url.searchParams.set('k', query);
+  url.searchParams.set('tag', AMAZON_TAG);
+  return url.toString();
+}
+
+/** Tagged Amazon link for a product: its ASIN page, or a search when the product is vehicle-specific. */
+export function productAmazonUrl(p: { asin?: string; amazonSearch?: string }): string {
+  if (p.asin) return amazonUrl(p.asin);
+  if (p.amazonSearch) return amazonSearchUrl(p.amazonSearch);
+  return AMAZON_HOST;
+}
+
 /** Add the Associates tag to any Amazon URL (keeps other params; replaces an existing tag). */
 export function tagAmazonUrl(href: string): string {
   try {
