@@ -31,9 +31,11 @@ const jsonLd = [
       <h1>Tested car gear,<br />clearly explained.</h1>
       <p class="lede">Straight answers on jump starters, tire inflators, dash cams, floor mats and the rest of the gear that keeps your car ready. What the specs mean, what to skip, and which one to buy.</p>
       <div class="hero-cta">
-        <a class="btn-ghost" href="/dash-cams/best-front-and-rear/">Best front and rear dash cams →</a>
-        <a class="text-link ui" href="/jump-starters/best-jump-starters/">Best jump starters</a>
-        <a class="text-link ui" href="/how-we-test/">How we test</a>
+        <a class="btn-primary ui" href="/dash-cams/best-front-and-rear/">Best front and rear dash cams <span aria-hidden="true">→</span></a>
+        <span class="links">
+          <a class="text-link ui" href="/jump-starters/best-jump-starters/">Best jump starters</a>
+          <a class="text-link ui" href="/how-we-test/">How we test</a>
+        </span>
       </div>
     </div>
   </section>
@@ -72,11 +74,19 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
-  .hero { padding: 3.5rem 0 2.5rem; border-bottom: 1px solid var(--line); }
-  .hero h1 { font-size: clamp(2.3rem, 7vw, 4rem); letter-spacing: -0.035em; line-height: 1.04; margin: 0.5rem 0 1rem; }
-  .lede { font-size: 1.25rem; max-width: 38rem; color: #2b2b2b; margin: 0 0 1.5rem; }
-  .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
-  .text-link { font-size: 0.95rem; font-weight: 600; }
+  .hero { padding: clamp(2.25rem, 7vw, 5rem) 0 clamp(2rem, 5vw, 3.5rem); border-bottom: 1px solid var(--line); }
+  .hero h1 { font-size: clamp(2.1rem, 1.4rem + 4vw, 4rem); letter-spacing: -0.035em; line-height: 1.04; margin: 0.5rem 0 1rem; text-wrap: balance; }
+  .lede { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); max-width: 38rem; color: #2b2b2b; margin: 0 0 1.5rem; }
+  .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; }
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 50px; padding: 0 1.4rem;
+    background: var(--text); color: #fff; border-radius: 999px; text-decoration: none; font-size: 1rem; font-weight: 700;
+  }
+  .btn-primary:hover { background: #000; color: #fff; }
+  .links { display: inline-flex; flex-wrap: wrap; gap: 0 1.5rem; }
+  .text-link { display: inline-flex; align-items: center; min-height: var(--tap); font-size: 0.95rem; font-weight: 600; }
+  section > h2 { margin-top: clamp(2rem, 5vw, 3rem); }
+  @media (max-width: 479px) { .btn-primary { width: 100%; } .links { width: 100%; justify-content: center; } }
   .grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
   .cats { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; grid-template-columns: 1fr; }
   .cats li { padding: 1rem 1.15rem; position: relative; }
@@ -84,17 +94,15 @@ const jsonLd = [
   .cats a::after { content: ''; position: absolute; inset: 0; }
   .cats li:hover a { text-decoration: underline; }
   .cats p { margin: 0.25rem 0 0; font-size: 0.98rem; color: var(--steel); }
-  .promise { margin-top: 3rem; padding: 1.5rem; }
+  .promise { margin-top: 3rem; padding: clamp(1.25rem, 3vw, 2rem); }
   .promise h2 { margin-top: 0; }
   .cols { display: grid; gap: 0.5rem 2rem; grid-template-columns: 1fr; }
   .cols h3 { margin: 0.75rem 0 0.25rem; font-size: 1.05rem; }
   .cols p { margin: 0; font-size: 1rem; }
   @media (min-width: 760px) {
-    .hero { padding: 5rem 0 3.5rem; }
     .grid { grid-template-columns: repeat(2, 1fr); }
     .cats { grid-template-columns: repeat(2, 1fr); }
     .cols { grid-template-columns: repeat(3, 1fr); }
-    .promise { padding: 2rem; }
   }
   @media (min-width: 1040px) {
     .grid { grid-template-columns: repeat(3, 1fr); }
