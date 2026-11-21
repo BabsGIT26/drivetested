@@ -1,21 +1,32 @@
 ---
 import { getCategory } from '../site.config';
-interface Props { title: string; description: string; href: string; category: string; date: Date }
-const { title, description, href, category, date } = Astro.props;
+import Illustration from './Illustration.astro';
+interface Props { title: string; description: string; href: string; category: string; date: Date; accent?: string }
+const { title, description, href, category, date, accent } = Astro.props;
 const cat = getCategory(category);
+const color = accent ?? cat?.color ?? '#2563eb';
 ---
-<article class="a-card card">
-  <p class="eyebrow">{cat?.name}</p>
-  <h3><a href={href}>{title}</a></h3>
-  <p class="desc">{description}</p>
-  <p class="ui-small">Updated <time datetime={date.toISOString()}>{date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</time></p>
+<article class="a-card card" style={`--cat:${color}`}>
+  <div class="thumb"><Illustration kind={category} accent={color} label="" /></div>
+  <div class="inner">
+    <p class="eyebrow">{cat?.name}</p>
+    <h3><a href={href}>{title}</a></h3>
+    <p class="desc">{description}</p>
+    <p class="ui-small">Updated <time datetime={date.toISOString()}>{date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</time></p>
+  </div>
 </article>
 <style>
-  .a-card { padding: 1.25rem; position: relative; display: flex; flex-direction: column; }
+  .a-card { position: relative; display: flex; flex-direction: column; overflow: hidden; transition: transform .15s ease, box-shadow .15s ease; }
+  .a-card:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -16px rgba(11, 31, 58, .4); }
+  .thumb { aspect-ratio: 16 / 10; overflow: hidden; border-bottom: 4px solid var(--cat); }
+  .thumb :global(.illo), .thumb :global(svg) { width: 100%; height: 100%; }
+  .thumb :global(svg) { object-fit: cover; }
+  .inner { padding: 1rem 1.25rem 1.15rem; display: flex; flex-direction: column; flex: 1; }
+  .eyebrow { margin: 0; }
   h3 { margin: 0.35rem 0 0.5rem; font-size: 1.15rem; }
-  h3 a { text-decoration: none; }
+  h3 a { text-decoration: none; color: var(--text); }
   h3 a::after { content: ''; position: absolute; inset: 0; }
-  .a-card:hover h3 a { text-decoration: underline; }
-  .desc { font-size: 1rem; margin: 0 0 0.75rem; color: #2b2b2b; flex: 1; }
+  .a-card:hover h3 a { text-decoration: underline; text-decoration-color: var(--cat); }
+  .desc { font-size: 1rem; margin: 0 0 0.75rem; color: #2b3342; flex: 1; }
   .ui-small { margin: 0; }
 </style>

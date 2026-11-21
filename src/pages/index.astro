@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
+import Illustration from '../components/Illustration.astro';
 import { CATEGORIES, SITE } from '../site.config';
 
 const articles = (await getCollection('articles', ({ data }) => import.meta.env.DEV || !data.draft))
@@ -26,23 +27,30 @@ const jsonLd = [
 ---
 <BaseLayout title={`${SITE.name}: ${SITE.tagline}`} description={SITE.description} jsonLd={jsonLd}>
   <section class="hero">
-    <div class="wrap">
-      <p class="eyebrow">Car accessory buying guides</p>
-      <h1>Tested car gear,<br />clearly explained.</h1>
-      <p class="lede">Straight answers on jump starters, tire inflators, dash cams, floor mats and the rest of the gear that keeps your car ready. What the specs mean, what to skip, and which one to buy.</p>
-      <div class="hero-cta">
-        <a class="btn-primary ui" href="/dash-cams/best-front-and-rear/">Best front and rear dash cams <span aria-hidden="true">→</span></a>
-        <span class="links">
-          <a class="text-link ui" href="/jump-starters/best-jump-starters/">Best jump starters</a>
-          <a class="text-link ui" href="/how-we-test/">How we test</a>
-        </span>
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <p class="kicker">Car accessory buying guides</p>
+        <h1>The right car gear,<br /><span class="hl">clearly explained.</span></h1>
+        <p class="lede">Straight answers on jump starters, tire inflators, dash cams, floor mats and the rest of the gear that keeps your car ready. What the specs mean, what to skip, and which one to buy.</p>
+        <div class="hero-cta">
+          <a class="btn-primary ui" href="/dash-cams/best-front-and-rear/">Best front and rear dash cams <span aria-hidden="true">→</span></a>
+          <span class="links">
+            <a class="text-link ui" href="/jump-starters/best-jump-starters/">Best jump starters</a>
+            <a class="text-link ui" href="/how-we-test/">How we score</a>
+          </span>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art a1"><Illustration kind="dash-cams" accent="#2563eb" label="" /></div>
+        <div class="art a2"><Illustration kind="jump-starters" accent="#f59e0b" label="" /></div>
+        <div class="art a3"><Illustration kind="tire-inflators" accent="#10b981" label="" /></div>
       </div>
     </div>
   </section>
 
   <div class="wrap">
     <section aria-labelledby="latest">
-      <h2 id="latest">Latest guides</h2>
+      <h2 id="latest" class="section-title">Latest guides</h2>
       <div class="grid">
         {articles.slice(0, 9).map((a) => (
           <ArticleCard title={a.data.title} description={a.data.description} href={`/${a.data.category}/${a.data.slug}/`} category={a.data.category} date={a.data.updatedDate ?? a.data.pubDate} />
@@ -51,12 +59,15 @@ const jsonLd = [
     </section>
 
     <section aria-labelledby="browse">
-      <h2 id="browse">Browse by category</h2>
+      <h2 id="browse" class="section-title">Browse by category</h2>
       <ul class="cats">
         {CATEGORIES.map((c) => (
-          <li class="card">
-            <a href={`/${c.slug}/`}>{c.name}</a>
-            <p>{c.description}</p>
+          <li class="cat-tile" style={`--cat:${c.color}`}>
+            <span class="cat-icon"><Illustration kind={c.slug} accent={c.color} label="" /></span>
+            <span class="cat-text">
+              <a href={`/${c.slug}/`}>{c.name}</a>
+              <span class="cat-desc">{c.description}</span>
+            </span>
           </li>
         ))}
       </ul>
@@ -74,30 +85,71 @@ const jsonLd = [
 </BaseLayout>
 
 <style>
-  .hero { padding: clamp(2.25rem, 7vw, 5rem) 0 clamp(2rem, 5vw, 3.5rem); border-bottom: 1px solid var(--line); }
-  .hero h1 { font-size: clamp(2.1rem, 1.4rem + 4vw, 4rem); letter-spacing: -0.035em; line-height: 1.04; margin: 0.5rem 0 1rem; text-wrap: balance; }
-  .lede { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); max-width: 38rem; color: #2b2b2b; margin: 0 0 1.5rem; }
+  .hero {
+    position: relative; overflow: hidden; color: #fff;
+    padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(3rem, 7vw, 5rem);
+    background:
+      radial-gradient(40rem 22rem at 90% 10%, rgba(37, 99, 235, .45), transparent 60%),
+      radial-gradient(30rem 18rem at 0% 100%, rgba(245, 158, 11, .18), transparent 60%),
+      linear-gradient(160deg, #0b1f3a 0%, #12305a 100%);
+  }
+  /* Road-lane motif along the bottom edge */
+  .hero::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 1.25rem; height: 4px;
+    background: repeating-linear-gradient(90deg, rgba(251, 191, 36, .85) 0 40px, transparent 40px 72px);
+  }
+  .hero::before {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2.75rem;
+    background: rgba(0, 0, 0, .18); border-top: 1px solid rgba(255, 255, 255, .06);
+  }
+  .hero-grid { position: relative; z-index: 1; display: grid; gap: 2rem; align-items: center; }
+  .kicker { font-family: var(--font-head); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fbbf24; margin: 0; }
+  .hero h1 { color: #fff; font-size: clamp(2.1rem, 1.4rem + 4vw, 3.9rem); letter-spacing: -0.035em; line-height: 1.04; margin: 0.6rem 0 1rem; text-wrap: balance; }
+  .hl { background: linear-gradient(90deg, #93c5fd, #60a5fa); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lede { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); max-width: 36rem; color: #dbe4f0; margin: 0 0 1.75rem; }
   .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; }
   .btn-primary {
-    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 50px; padding: 0 1.4rem;
-    background: var(--text); color: #fff; border-radius: 999px; text-decoration: none; font-size: 1rem; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 50px; padding: 0 1.5rem;
+    background: #fbbf24; color: var(--navy); border-radius: 999px; text-decoration: none; font-size: 1rem; font-weight: 800;
+    box-shadow: 0 8px 20px -8px rgba(251, 191, 36, .6);
   }
-  .btn-primary:hover { background: #000; color: #fff; }
+  .btn-primary:hover { background: #fcd34d; color: var(--navy); }
+  .hero :focus-visible { outline-color: #fbbf24; }
   .links { display: inline-flex; flex-wrap: wrap; gap: 0 1.5rem; }
-  .text-link { display: inline-flex; align-items: center; min-height: var(--tap); font-size: 0.95rem; font-weight: 600; }
-  section > h2 { margin-top: clamp(2rem, 5vw, 3rem); }
+  .text-link { display: inline-flex; align-items: center; min-height: var(--tap); font-size: 0.95rem; font-weight: 600; color: #fff; text-decoration-color: #fbbf24; }
+  .text-link:hover { color: #fbbf24; }
+  .hero-art { display: none; }
   @media (max-width: 479px) { .btn-primary { width: 100%; } .links { width: 100%; justify-content: center; } }
+  @media (min-width: 900px) {
+    .hero-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+    .hero-art { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; transform: rotate(-2deg); }
+    .art { border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px -18px rgba(0, 0, 0, .6); border: 3px solid rgba(255, 255, 255, .9); }
+    .a1 { grid-column: 1 / -1; }
+  }
+
+  section > h2 { margin-top: clamp(2rem, 5vw, 3rem); }
   .grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
-  .cats { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; grid-template-columns: 1fr; }
-  .cats li { padding: 1rem 1.15rem; position: relative; }
-  .cats a { font-family: var(--font-head); font-weight: 700; text-decoration: none; font-size: 1.05rem; }
+  .cats { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.85rem; grid-template-columns: 1fr; }
+  .cat-tile {
+    position: relative; display: flex; align-items: center; gap: 0.9rem; padding: 0.75rem; border-radius: var(--radius);
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+    border-left: 5px solid var(--cat); transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .cat-tile:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -14px rgba(11, 31, 58, .35); }
+  .cat-icon { flex: none; width: 5.5rem; border-radius: 10px; overflow: hidden; }
+  .cat-text { display: flex; flex-direction: column; min-width: 0; }
+  .cats a { font-family: var(--font-head); font-weight: 800; text-decoration: none; font-size: 1.05rem; color: var(--text); }
   .cats a::after { content: ''; position: absolute; inset: 0; }
-  .cats li:hover a { text-decoration: underline; }
-  .cats p { margin: 0.25rem 0 0; font-size: 0.98rem; color: var(--steel); }
-  .promise { margin-top: 3rem; padding: clamp(1.25rem, 3vw, 2rem); }
+  .cat-tile:hover a { text-decoration: underline; text-decoration-color: var(--cat); }
+  .cat-desc { margin: 0.2rem 0 0; font-size: 0.95rem; line-height: 1.4; color: var(--steel); }
+  .promise {
+    margin-top: 3rem; padding: clamp(1.25rem, 3vw, 2rem);
+    background: linear-gradient(135deg, var(--blue-50), #fff 60%, var(--amber-50)); border-top: 4px solid var(--blue);
+  }
   .promise h2 { margin-top: 0; }
   .cols { display: grid; gap: 0.5rem 2rem; grid-template-columns: 1fr; }
-  .cols h3 { margin: 0.75rem 0 0.25rem; font-size: 1.05rem; }
+  .cols h3 { margin: 0.75rem 0 0.25rem; font-size: 1.05rem; color: var(--navy); }
+  .cols h3::before { content: ''; display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--amber); margin-right: 0.5rem; vertical-align: 0.05em; }
   .cols p { margin: 0; font-size: 1rem; }
   @media (min-width: 760px) {
     .grid { grid-template-columns: repeat(2, 1fr); }
@@ -107,5 +159,8 @@ const jsonLd = [
   @media (min-width: 1040px) {
     .grid { grid-template-columns: repeat(3, 1fr); }
     .cats { grid-template-columns: repeat(4, 1fr); }
+    .cat-tile { flex-direction: column; align-items: stretch; padding: 0; overflow: hidden; border-left: 1px solid var(--line); border-top: 5px solid var(--cat); }
+    .cat-icon { width: 100%; border-radius: 0; }
+    .cat-text { padding: 0.85rem 1rem 1rem; }
   }
 </style>

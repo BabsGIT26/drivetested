@@ -7,8 +7,9 @@ const { title, tone = 'note' } = Astro.props;
   <slot />
 </aside>
 <style>
-  .callout { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: 1rem 1.15rem; margin: 1.5rem 0; font-size: 1.02rem; }
-  .callout.safety { border-left: 4px solid var(--text); }
-  .t { font-family: var(--font-head); font-weight: 700; margin: 0 0 0.35rem; font-size: 0.95rem; }
+  .callout { border: 1px solid #c9dafc; border-left: 5px solid var(--blue); background: var(--blue-50); border-radius: var(--radius); padding: 1rem 1.15rem; margin: 1.5rem 0; font-size: 1.02rem; }
+  .callout.safety { background: var(--amber-50); border-color: #fcd9a0; border-left-color: var(--amber); }
+  .callout.safety .t { color: var(--amber-700); }
+  .t { font-family: var(--font-head); font-weight: 800; margin: 0 0 0.35rem; font-size: 0.95rem; color: var(--blue-700); }
   .callout :global(p:last-child), .callout :global(ul:last-child), .callout :global(ol:last-child) { margin-bottom: 0; }
 </style>
