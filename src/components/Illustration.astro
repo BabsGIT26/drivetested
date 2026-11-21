@@ -1,0 +1,12 @@
+---
+/** Inline, original SVG illustration (see src/lib/illustrations.ts). Never a photo of the real product. */
+import { illustrationSvg } from '../lib/illustrations';
+interface Props { kind: string; accent?: string; label?: string; background?: boolean; slice?: boolean; class?: string }
+const { kind, accent, label, background, slice, class: cls } = Astro.props;
+const svg = illustrationSvg(kind, { accent, label, background, slice });
+---
+<span class:list={['illo', cls]} set:html={svg} />
+<style>
+  .illo { display: block; line-height: 0; }
+  .illo :global(svg) { width: 100%; height: auto; display: block; }
+</style>

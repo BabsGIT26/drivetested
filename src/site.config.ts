@@ -65,41 +65,57 @@ export function tagAmazonUrl(href: string): string {
 export const CATEGORIES = [
   {
     slug: 'jump-starters',
+    /** Decorative brand color for tiles, banners and illustrations (not used for text). */
+    color: '#f59e0b',
     name: 'Jump Starters',
     description: 'Portable lithium and lead-acid jump starters, including models with built-in air compressors.',
   },
   {
     slug: 'tire-inflators',
+    /** Decorative brand color for tiles, banners and illustrations (not used for text). */
+    color: '#0d9488',
     name: 'Tire Inflators',
     description: 'Cordless and 12V tire inflators and portable air compressors for cars, trucks and bikes.',
   },
   {
     slug: 'dash-cams',
+    /** Decorative brand color for tiles, banners and illustrations (not used for text). */
+    color: '#2563eb',
     name: 'Dash Cams',
     description: 'Front, front-and-rear and cabin dash cams: video quality, parking mode and what actually matters.',
   },
   {
     slug: 'floor-mats',
+    /** Decorative brand color for tiles, banners and illustrations (not used for text). */
+    color: '#6366f1',
     name: 'Floor Mats',
     description: 'All-weather and custom-fit floor liners, and how to find mats that really fit your vehicle.',
   },
   {
     slug: 'seat-covers',
+    /** Decorative brand color for tiles, banners and illustrations (not used for text). */
+    color: '#db2777',
     name: 'Seat Covers',
     description: 'Seat covers and protectors for kids, pets, work and daily driving.',
   },
   {
     slug: 'detailing',
+    /** Decorative brand color for tiles, banners and illustrations (not used for text). */
+    color: '#0891b2',
     name: 'Detailing',
     description: 'Washing, drying, interior cleaning and paint-care gear for at-home detailing.',
   },
   {
     slug: 'organization',
+    /** Decorative brand color for tiles, banners and illustrations (not used for text). */
+    color: '#16a34a',
     name: 'Organization',
     description: 'Trunk organizers, seat-back storage and roadside kits that keep a car tidy and ready.',
   },
   {
     slug: 'vehicle-guides',
+    /** Decorative brand color for tiles, banners and illustrations (not used for text). */
+    color: '#7c3aed',
     name: 'Vehicle Guides',
     description: 'Accessory guides for specific vehicles and plain-English car-care explainers.',
   },
