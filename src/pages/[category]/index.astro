@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { CATEGORIES, SITE } from '../../site.config';
+
+export function getStaticPaths() {
+  return CATEGORIES.map((c) => ({ params: { category: c.slug }, props: { cat: c } }));
+}
+const { cat } = Astro.props;
+const articles = (await getCollection('articles', ({ data }) => data.category === cat.slug && (import.meta.env.DEV || !data.draft)))
+  .sort((a, b) => +(b.data.updatedDate ?? b.data.pubDate) - +(a.data.updatedDate ?? a.data.pubDate));
+const site = Astro.site ?? new URL(SITE.url);
+const url = new URL(Astro.url.pathname, site).toString();
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${cat.name} buying guides and reviews`,
+    description: cat.description,
+    url,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: site.toString() },
+      { '@type': 'ListItem', position: 2, name: cat.name, item: url },
+    ],
+  },
+];
+---
+<BaseLayout title={`${cat.name}: Buying Guides & Reviews`} description={cat.description} jsonLd={jsonLd} noindex={articles.length === 0}>
+  <div class="wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: cat.name, href: Astro.url.pathname }]} />
+    <header class="measure">
+      <h1>{cat.name}</h1>
+      <p class="lede">{cat.description}</p>
+    </header>
+    {articles.length > 0 ? (
+      <div class="grid">
+        {articles.map((a) => (
+          <ArticleCard title={a.data.title} description={a.data.description} href={`/${a.data.category}/${a.data.slug}/`} category={a.data.category} date={a.data.updatedDate ?? a.data.pubDate} />
+        ))}
+      </div>
+    ) : (
+      <div class="empty card">
+        <p><strong>New guides are on the way.</strong> We're researching and testing {cat.name.toLowerCase()} now.</p>
+        <p class="ui-small">In the meantime, see <a href="/jump-starters/best-with-air-compressor/">the best portable jump starters with air compressors</a>.</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+<style>
+  .lede { font-size: 1.2rem; color: #2b2b2b; }
+  .grid { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1.5rem; }
+  .empty { padding: 1.5rem; margin-top: 1.5rem; max-width: var(--measure); }
+  .empty p { margin: 0 0 0.5rem; }
+  @media (min-width: 760px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1040px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+</style>

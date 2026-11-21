@@ -1,0 +1,44 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../site.config';
+// TODO OWNER: personalise this page. Add who you are, your background with cars/tools, and a photo if you like.
+// A real person behind the site is one of the strongest trust signals for readers and for Google.
+---
+<PageLayout
+  title="About DriveTested"
+  heading="About DriveTested"
+  description="DriveTested publishes plain-English buying guides and reviews for car accessories, from jump starters to floor mats."
+  lede="DriveTested helps drivers buy the right car gear the first time, with clear explanations, honest picks and no fluff."
+>
+  <h2>Why this site exists</h2>
+  <p>
+    Shopping for car accessories online is harder than it should be. Listings shout huge "peak amp" numbers, every
+    product claims to fit every vehicle, and many review pages simply repeat the manufacturer's copy. We started
+    DriveTested to do the opposite: explain what the specs mean in real life, point out the trade-offs, and recommend
+    a small number of products we'd be comfortable putting in our own cars.
+  </p>
+
+  <h2>What we cover</h2>
+  <p>
+    Roadside essentials (jump starters and tire inflators), dash cams, floor mats and seat covers, detailing supplies,
+    organization gear, and vehicle-specific guides.
+  </p>
+
+  <h2>How we work</h2>
+  <ul>
+    <li>We explain how we choose and evaluate products on our <a href="/how-we-test/">How We Test</a> page.</li>
+    <li>Every guide says whether its picks are based on our own hands-on use or on research (specifications, manuals and published independent tests).</li>
+    <li>We update guides when products change, get discontinued or better options appear.</li>
+    <li>We're reader-supported through affiliate links. Read our <a href="/affiliate-disclosure/">affiliate disclosure</a>.</li>
+  </ul>
+
+  <h2>Who's behind DriveTested</h2>
+  {/* TODO OWNER: replace this paragraph with your name and a short, genuine bio. */}
+  <p>
+    DriveTested is an independent site run by {SITE.author}. We're drivers first, and we write for people who want a
+    straight answer, not a spec-sheet dump.
+  </p>
+
+  <h2>Get in touch</h2>
+  <p>Spotted a mistake, or want us to look at a product? <a href="/contact/">Contact us</a>.</p>
+</PageLayout>

@@ -1,0 +1,40 @@
+---
+/**
+ * The ONLY place the accent red is used: "Check price on Amazon".
+ * Pass either an ASIN (preferred) or a full Amazon URL; the Associates tag is applied automatically.
+ */
+import { amazonUrl, tagAmazonUrl } from '../site.config';
+
+interface Props {
+  asin?: string;
+  href?: string;
+  label?: string;
+  size?: 'md' | 'sm';
+  productName?: string;
+}
+const { asin, href, label = 'Check price on Amazon', size = 'md', productName } = Astro.props;
+const url = asin ? amazonUrl(asin) : href ? tagAmazonUrl(href) : '#';
+---
+<a
+  class:list={['amz-btn', size]}
+  href={url}
+  target="_blank"
+  rel="sponsored nofollow noopener"
+  aria-label={productName ? `${label}: ${productName} (opens Amazon in a new tab)` : `${label} (opens in a new tab)`}
+  data-asin={asin}
+>{label}<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+
+<style>
+  .amz-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+    background: var(--accent); color: #fff; text-decoration: none;
+    font-family: var(--font-head); font-weight: 700; letter-spacing: -0.005em;
+    border-radius: 999px; padding: 0.85rem 1.4rem; font-size: 1rem; line-height: 1.1;
+    box-shadow: 0 1px 0 rgba(0,0,0,.08); transition: background .15s ease, transform .15s ease;
+    min-height: 44px; white-space: nowrap;
+  }
+  .amz-btn:hover { background: var(--accent-hover); color: #fff; }
+  .amz-btn:active { transform: translateY(1px); }
+  .amz-btn:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
+  .amz-btn.sm { padding: 0.6rem 1rem; font-size: 0.875rem; min-height: 40px; }
+</style>

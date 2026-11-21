@@ -1,0 +1,65 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+/*
+ * TODO OWNER: This page describes the testing process DriveTested intends to follow.
+ * Before launch, confirm each step matches what you actually do (or edit it), and fill in:
+ *   - the vehicles you test with (year/make/model)
+ *   - the tools you use (e.g. a digital tire gauge, multimeter/battery tester, stopwatch)
+ *   - how long you use products before publishing a hands-on verdict
+ * Only set `handsOnTested: true` on an article once you have personally tested its products.
+ */
+---
+<PageLayout
+  title="How We Test and Choose Car Gear"
+  heading="How we test"
+  description="How DriveTested researches, tests and chooses the car accessories we recommend, and how we label research-based picks."
+  lede="Our recommendations follow the same process every time, and every guide tells you which parts are hands-on and which are research."
+>
+  <h2>1. Research first</h2>
+  <p>
+    For every category we start by building a long list of products that are actually available to buy. We read
+    manufacturer specifications and manuals, look at warranty terms, check safety certifications where they matter,
+    and read published independent test results from established outlets. We also read the long tail of owner reviews
+    to find recurring failures that only show up after months of use.
+  </p>
+
+  <h2>2. Hands-on testing</h2>
+  <p>
+    Products that make our shortlist are tested in normal use with our own vehicles. Our testing is designed around
+    the jobs you actually need the gear to do, for example:
+  </p>
+  <ul>
+    <li><strong>Jump starters:</strong> starting a vehicle with a deliberately discharged battery, checking clamp grip and cable reach, and confirming the safety protections (reverse polarity, short circuit) behave as described.</li>
+    <li><strong>Tire inflators and compressors:</strong> timing how long it takes to top up a tire by a set amount, and comparing the device's built-in gauge with a separate digital tire gauge.</li>
+    <li><strong>Dash cams:</strong> reviewing day, night and glare footage, and checking whether plates are readable.</li>
+    <li><strong>Floor mats and seat covers:</strong> checking fit, edge coverage and how well they hold up to water, mud and daily wear.</li>
+  </ul>
+  {/* TODO OWNER: add your test vehicles and tools here once confirmed, e.g. "We test in a 20XX Make Model and a 20XX Make Model." */}
+
+  <h2>3. Clear labels: tested vs. researched</h2>
+  <p>
+    Some guides are published before every product in them has been through hands-on testing. When that's the case,
+    we say so near the top of the article and explain what the recommendations are based on. When we add our own
+    test results, we update the guide and the "Updated" date.
+  </p>
+
+  <h2>4. How we choose winners</h2>
+  <p>
+    We weigh real-world performance, safety, ease of use, build quality, warranty and support, and value. A product
+    doesn't need the biggest numbers on the box to win; it needs to do the job reliably for the person it's meant for.
+  </p>
+
+  <h2>5. Independence</h2>
+  <p>
+    We don't accept payment for placement, and brands don't review or approve our articles before they're published.
+    We may earn a commission when you buy through our links. That's how the site is funded, and it doesn't affect our
+    picks. See our <a href="/affiliate-disclosure/">affiliate disclosure</a>.
+  </p>
+
+  <h2>6. Keeping guides current</h2>
+  <p>
+    Products change, get discontinued, or get replaced by better options. We review our guides regularly and update
+    them when the recommendation changes. We don't show prices on the page because they change too often. Use the
+    "Check price on Amazon" buttons to see the current price.
+  </p>
+</PageLayout>

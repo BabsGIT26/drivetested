@@ -1,0 +1,48 @@
+---
+import AmazonButton from './AmazonButton.astro';
+
+interface Product { id: string; name: string; asin: string; award?: string; specs: { label: string; value: string }[] }
+interface Props { products: Product[]; columns: string[]; caption?: string }
+const { products, columns, caption = 'Side-by-side comparison (manufacturer-listed specs)' } = Astro.props;
+const val = (p: Product, label: string) => p.specs.find((s) => s.label === label)?.value ?? '—';
+---
+<figure class="compare">
+  <div class="scroll" role="region" aria-label={caption} tabindex="0">
+    <table>
+      <caption>{caption}</caption>
+      <thead>
+        <tr>
+          <th scope="col">Model</th>
+          {columns.map((c) => <th scope="col">{c}</th>)}
+          <th scope="col"><span class="sr-only">Price</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {products.map((p) => (
+          <tr>
+            <th scope="row">
+              {p.award && <span class="award">{p.award}</span>}
+              <a href={`#${p.id}`}>{p.name}</a>
+            </th>
+            {columns.map((c) => <td>{val(p, c)}</td>)}
+            <td class="cta"><AmazonButton asin={p.asin} size="sm" productName={p.name} /></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</figure>
+<style>
+  .compare { margin: 1.5rem 0 2.5rem; }
+  .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 44rem; font-family: var(--font-head); font-size: 0.875rem; }
+  caption { text-align: left; padding: 0.8rem 1rem; color: var(--steel); font-size: 0.8rem; border-bottom: 1px solid var(--line); }
+  th, td { text-align: left; padding: 0.8rem 1rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+  thead th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); font-weight: 600; background: var(--bg); }
+  tbody th { font-weight: 650; min-width: 11rem; }
+  tbody th a { text-decoration: none; }
+  .award { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); font-weight: 600; margin-bottom: 0.15rem; }
+  .cta { text-align: right; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>

@@ -1,0 +1,29 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../site.config';
+// TODO OWNER: make sure the contact mailbox in src/site.config.ts actually receives mail before launch.
+---
+<PageLayout
+  title="Contact DriveTested"
+  heading="Contact us"
+  description="Get in touch with DriveTested: corrections, product suggestions and questions about our guides."
+  lede="We read every message. Corrections and product suggestions are especially welcome."
+>
+  <p class="email"><a class="btn-ghost" href={`mailto:${SITE.contactEmail}`}>Email {SITE.contactEmail}</a></p>
+
+  <h2>Good reasons to write</h2>
+  <ul>
+    <li><strong>Corrections:</strong> a spec, fitment detail or link that's wrong or out of date.</li>
+    <li><strong>Suggestions:</strong> a product or vehicle you'd like us to cover.</li>
+    <li><strong>Questions:</strong> not sure which pick fits your car? Tell us the year, make and model.</li>
+  </ul>
+
+  <h2>Brands and PR</h2>
+  <p>
+    You're welcome to tell us about products. Please note we don't accept payment for coverage or placement, and we
+    don't send articles for approval before publishing. See <a href="/how-we-test/">How We Test</a>.
+  </p>
+</PageLayout>
+<style>
+  .email { margin: 1.5rem 0 2rem; }
+</style>

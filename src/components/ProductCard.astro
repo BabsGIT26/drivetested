@@ -1,0 +1,69 @@
+---
+import AmazonButton from './AmazonButton.astro';
+
+interface Props {
+  product: {
+    id: string; name: string; brand: string; asin: string; award?: string; bestFor: string;
+    specs?: { label: string; value: string }[]; pros?: string[]; cons?: string[]; image?: string;
+  };
+  rank?: number;
+}
+const { product: p, rank } = Astro.props;
+---
+<article class="product card" id={p.id}>
+  <header>
+    {p.award && <p class="eyebrow">{rank ? `${rank}. ` : ''}{p.award}</p>}
+    <h3>{p.name}</h3>
+    <p class="best-for ui-small"><strong>Best for:</strong> {p.bestFor}</p>
+  </header>
+  {p.image && <img src={p.image} alt={p.name} loading="lazy" width="480" height="360" />}
+  {p.specs && p.specs.length > 0 && (
+    <dl class="specs">
+      {p.specs.map((s) => (<div><dt>{s.label}</dt><dd>{s.value}</dd></div>))}
+    </dl>
+  )}
+  <div class="pc">
+    {p.pros && p.pros.length > 0 && (
+      <div>
+        <p class="pc-title">Pros</p>
+        <ul class="pros">{p.pros.map((x) => <li>{x}</li>)}</ul>
+      </div>
+    )}
+    {p.cons && p.cons.length > 0 && (
+      <div>
+        <p class="pc-title">Cons</p>
+        <ul class="cons">{p.cons.map((x) => <li>{x}</li>)}</ul>
+      </div>
+    )}
+  </div>
+  <div class="body"><slot /></div>
+  <div class="cta-row">
+    <AmazonButton asin={p.asin} productName={p.name} />
+  </div>
+</article>
+<style>
+  .product { padding: 1.25rem; margin: 2rem 0; scroll-margin-top: 6rem; }
+  h3 { margin: 0.2rem 0 0.35rem; font-size: 1.35rem; }
+  .best-for { margin: 0 0 1rem; }
+  .best-for strong { color: var(--text); font-weight: 600; }
+  .specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 0 0 1rem; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .specs div { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); }
+  .specs dt { font-family: var(--font-head); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); }
+  .specs dd { margin: 0.1rem 0 0; font-family: var(--font-head); font-size: 0.92rem; font-weight: 600; }
+  .pc { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-bottom: 0.5rem; }
+  .pc-title { font-family: var(--font-head); font-weight: 700; font-size: 0.85rem; margin: 0 0 0.35rem; }
+  .pc ul { list-style: none; padding: 0; margin: 0; font-size: 1rem; }
+  .pc li { position: relative; padding-left: 1.5rem; margin: 0.35rem 0; line-height: 1.45; }
+  .pros li::before, .cons li::before { position: absolute; left: 0; top: 0; font-family: var(--font-head); font-weight: 700; }
+  .pros li::before { content: '+'; color: var(--text); }
+  .cons li::before { content: '–'; color: var(--steel); }
+  .body :global(p) { margin: 0.75rem 0; }
+  .cta-row { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+  .cta-row :global(.amz-btn) { width: 100%; }
+  @media (min-width: 640px) {
+    .product { padding: 1.75rem; }
+    .specs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .pc { grid-template-columns: 1fr 1fr; }
+    .cta-row :global(.amz-btn) { width: auto; }
+  }
+</style>

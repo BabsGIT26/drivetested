@@ -1,0 +1,57 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../site.config';
+// TODO OWNER: set the effective date below, and update this policy if you add analytics, a newsletter, ads or comments.
+// This is a plain-language starting point, not legal advice.
+const effective = 'November 21, 2026';
+---
+<PageLayout
+  title="Privacy Policy"
+  heading="Privacy policy"
+  description="How DriveTested handles information when you visit our site, including cookies set by Amazon when you click affiliate links."
+>
+  <p class="ui-small">Effective date: {effective}</p>
+
+  <h2>The short version</h2>
+  <p>
+    {SITE.name} doesn't require an account, doesn't sell personal information, and doesn't run third-party advertising
+    trackers on this site. When you click a link to Amazon or another retailer, that retailer may set cookies so it can
+    credit us for a sale.
+  </p>
+
+  <h2>Information we collect</h2>
+  <ul>
+    <li><strong>Server logs.</strong> Our hosting provider (Vercel) processes standard technical information such as IP address, browser type and the pages requested, to deliver the site and keep it secure.</li>
+    <li><strong>Email you send us.</strong> If you contact us, we receive your email address and message and use them only to reply.</li>
+  </ul>
+
+  <h2>Affiliate links and cookies</h2>
+  <p>
+    We participate in the Amazon Services LLC Associates Program. When you click an Amazon link on our site, Amazon may
+    place or read cookies in your browser to attribute purchases to us. Amazon's use of that information is covered by
+    Amazon's own privacy notice. We don't receive your name, address or what you bought, only aggregated reports of
+    qualifying purchases.
+  </p>
+
+  <h2>Analytics</h2>
+  <p>
+    If we add privacy-friendly analytics to measure which pages are useful, we will update this policy to name the
+    provider and what it collects.
+  </p>
+
+  <h2>Your choices</h2>
+  <p>
+    You can block or delete cookies in your browser settings. Depending on where you live (for example in the EU, UK
+    or California), you may have rights to access or delete personal information we hold about you. Contact us to
+    make a request.
+  </p>
+
+  <h2>Children</h2>
+  <p>This site is intended for adults and is not directed to children under 13.</p>
+
+  <h2>Changes</h2>
+  <p>We'll update this page if our practices change and revise the effective date above.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about privacy: <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.</p>
+</PageLayout>

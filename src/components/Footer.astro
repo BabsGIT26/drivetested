@@ -1,0 +1,44 @@
+---
+import { CATEGORIES, SITE } from '../site.config';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap grid">
+    <div>
+      <p class="brand">DriveTested</p>
+      <p class="ui-small">{SITE.tagline}.</p>
+      <p class="ui-small disclosure">
+        As an Amazon Associate I earn from qualifying purchases. When you buy through links on this site,
+        we may earn a commission at no extra cost to you. <a href="/affiliate-disclosure/">Learn more</a>.
+      </p>
+    </div>
+    <nav aria-label="Categories">
+      <p class="eyebrow">Categories</p>
+      <ul>{CATEGORIES.map((c) => <li><a href={`/${c.slug}/`}>{c.name}</a></li>)}</ul>
+    </nav>
+    <nav aria-label="About DriveTested">
+      <p class="eyebrow">DriveTested</p>
+      <ul>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/how-we-test/">How We Test</a></li>
+        <li><a href="/affiliate-disclosure/">Affiliate Disclosure</a></li>
+        <li><a href="/privacy-policy/">Privacy Policy</a></li>
+        <li><a href="/contact/">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap legal ui-small">© {year} {SITE.name}. Amazon and the Amazon logo are trademarks of Amazon.com, Inc. or its affiliates.</div>
+</footer>
+
+<style>
+  .site-footer { margin-top: 5rem; border-top: 1px solid var(--line); padding: 3rem 0 2rem; background: var(--surface); }
+  .grid { display: grid; gap: 2rem; grid-template-columns: 1fr; }
+  .brand { font-family: var(--font-head); font-weight: 800; font-size: 1.1rem; margin: 0 0 0.25rem; }
+  .disclosure { max-width: 28rem; }
+  ul { list-style: none; padding: 0; margin: 0.5rem 0 0; }
+  li { margin: 0.35rem 0; }
+  nav a { font-family: var(--font-head); font-size: 0.9rem; text-decoration: none; color: var(--steel); }
+  nav a:hover { color: var(--text); }
+  .legal { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+  @media (min-width: 720px) { .grid { grid-template-columns: 2fr 1fr 1fr; } }
+</style>

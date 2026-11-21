@@ -1,0 +1,42 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../site.config';
+---
+<PageLayout
+  title="Affiliate Disclosure"
+  heading="Affiliate disclosure"
+  description="How DriveTested makes money: we are a participant in the Amazon Services LLC Associates Program and may earn commissions on qualifying purchases."
+>
+  <p><strong>As an Amazon Associate I earn from qualifying purchases.</strong></p>
+  <p>
+    {SITE.name} is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program
+    designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.com.
+  </p>
+  <p>
+    This means that when you click a link on our site (such as a "Check price on Amazon" button) and make a purchase,
+    we may receive a small commission. It costs you nothing extra; the price you pay is the same.
+  </p>
+
+  <h2>Does this affect our recommendations?</h2>
+  <p>
+    No. We choose products based on our research and testing process, described on our
+    <a href="/how-we-test/">How We Test</a> page. Brands cannot pay to be included or to change our verdicts, and we
+    regularly recommend against products that would earn us a commission.
+  </p>
+
+  <h2>Other affiliate programs</h2>
+  <p>
+    We may also join affiliate programs run by other retailers or manufacturers. Any link that can earn us a commission
+    is marked as sponsored in our code, and this page applies to all of them.
+  </p>
+
+  <h2>Prices and availability</h2>
+  <p>
+    We don't list prices on our pages because they change frequently. Product prices and availability are accurate as
+    of the date and time indicated on Amazon and are subject to change. Any price and availability information displayed
+    on Amazon at the time of purchase will apply to the purchase of the product.
+  </p>
+
+  <h2>Questions</h2>
+  <p>Get in touch any time via our <a href="/contact/">contact page</a>.</p>
+</PageLayout>

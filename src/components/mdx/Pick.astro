@@ -1,0 +1,9 @@
+---
+/** MDX helper: <Pick id="..." products={frontmatter.products} rank={1}>optional notes</Pick> */
+import ProductCard from '../ProductCard.astro';
+interface Props { id: string; products: any[]; rank?: number }
+const { id, products, rank } = Astro.props;
+const product = products.find((p) => p.id === id);
+if (!product) throw new Error(`<Pick> unknown product id "${id}"`);
+---
+<ProductCard product={product} rank={rank}><slot /></ProductCard>
