@@ -11,13 +11,15 @@ const caption = Astro.props.caption ?? (hasScore
   : 'Side-by-side comparison (manufacturer-listed specs)');
 ---
 <figure class="compare">
+  <figcaption class="cap">{caption}</figcaption>
+  <p class="swipe-hint" aria-hidden="true">Swipe the table sideways to compare all specs →</p>
   <div class="scroll" role="region" aria-label={caption} tabindex="0">
     <table>
-      <caption>{caption}</caption>
+      <caption class="sr-only">{caption}</caption>
       <thead>
         <tr>
           <th scope="col">Model</th>
-          {hasScore && <th scope="col">Score</th>}
+          {hasScore && <th scope="col" class="score-h">Score</th>}
           {columns.map((c) => <th scope="col">{c}</th>)}
           <th scope="col"><span class="sr-only">Price</span></th>
         </tr>
@@ -28,6 +30,7 @@ const caption = Astro.props.caption ?? (hasScore
             <th scope="row">
               {p.award && <span class="award">{p.award}</span>}
               <a href={`#${p.id}`}>{p.name}</a>
+              {typeof p.score === 'number' && <span class="score-m">{p.score.toFixed(1)}/10</span>}
             </th>
             {hasScore && <td class="score">{typeof p.score === 'number' ? <><strong>{p.score.toFixed(1)}</strong>/10</> : '—'}</td>}
             {columns.map((c) => <td>{val(p, c)}</td>)}
@@ -40,17 +43,44 @@ const caption = Astro.props.caption ?? (hasScore
 </figure>
 <style>
   .compare { margin: 1.5rem 0 2.5rem; }
-  .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-  table { border-collapse: collapse; width: 100%; min-width: 44rem; font-family: var(--font-head); font-size: 0.875rem; }
-  caption { text-align: left; padding: 0.8rem 1rem; color: var(--steel); font-size: 0.8rem; border-bottom: 1px solid var(--line); }
-  th, td { text-align: left; padding: 0.8rem 1rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .scroll {
+    position: relative; overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+    border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface);
+  }
+  table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 44rem; font-family: var(--font-head); font-size: 0.875rem; }
+  .cap { font-family: var(--font-head); color: var(--steel); font-size: 0.8rem; line-height: 1.45; margin: 0 0 0.5rem; max-width: var(--measure); }
+  th, td { text-align: left; padding: 0.85rem 1rem; border-bottom: 1px solid var(--line); vertical-align: middle; line-height: 1.4; }
+  td { min-width: 6.5rem; }
+  td.cta, td.score { min-width: 0; }
   tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
-  thead th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); font-weight: 600; background: var(--bg); }
-  tbody th { font-weight: 650; min-width: 11rem; }
+  tbody tr:hover td, tbody tr:hover th { background: #fbfbfa; }
+  thead th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); font-weight: 600; background: var(--bg); vertical-align: bottom; }
+  tbody th { font-weight: 650; width: 12rem; min-width: 10rem; }
+  /* Sticky model column so the product name stays visible while swiping */
+  thead th:first-child, tbody th {
+    position: sticky; left: 0; z-index: 2; background: var(--surface); box-shadow: 1px 0 0 var(--line), 6px 0 8px -6px rgba(0,0,0,.12);
+  }
+  thead th:first-child { background: var(--bg); }
   tbody th a { text-decoration: none; }
-  .award { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); font-weight: 600; margin-bottom: 0.15rem; }
-  .cta { text-align: right; }
-  .score { white-space: nowrap; color: var(--steel); }
-  .score strong { color: var(--text); font-size: 1rem; }
-  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  tbody th a:hover { text-decoration: underline; }
+  .award { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); font-weight: 600; margin-bottom: 0.2rem; }
+  .score-m { display: none; margin-top: 0.25rem; font-size: 0.8rem; font-weight: 700; }
+  .cta { text-align: right; padding-left: 0.5rem; }
+  .score { white-space: nowrap; color: var(--steel); min-width: 0; }
+  .score strong { color: var(--text); font-size: 1.05rem; }
+  /* Phones: tighter cells, score shown under the name, narrower sticky column */
+  @media (max-width: 47.99rem) {
+    table { min-width: 40rem; font-size: 0.84rem; }
+    th, td { padding: 0.75rem 0.8rem; }
+    tbody th { width: 9.5rem; min-width: 9.5rem; max-width: 9.5rem; }
+    .score-m { display: block; }
+    .score, .score-h { display: none; }
+  }
+  @media (min-width: 48rem) and (max-width: 79.99rem) {
+    tbody th { width: 9.5rem; min-width: 9rem; }
+    th, td { padding: 0.8rem 0.65rem; }
+  }
+  @media (min-width: 64rem) {
+    td { min-width: 0; }
+  }
 </style>

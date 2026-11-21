@@ -15,9 +15,10 @@ const { product: p, rank } = Astro.props;
     {p.award && <p class="eyebrow">{rank ? `${rank}. ` : ''}{p.award}</p>}
     <h3>{p.name}</h3>
     {typeof p.score === 'number' && (
-      <p class="score ui-small" title="DriveTested research score: based on published test results, specs, warranty and owner reviews. Not a hands-on rating.">
-        <span class="score-num">{p.score.toFixed(1)}</span><span class="score-of">/10</span> <span class="score-label">DriveTested score (research-based)</span>
-      </p>
+      <div class="score" title="DriveTested research score: based on published test results, specs, warranty and owner reviews. Not a hands-on rating.">
+        <p class="score-line"><span class="score-num">{p.score.toFixed(1)}</span><span class="score-of">/10</span> <span class="score-label">DriveTested score <span class="nowrap">(research-based)</span></span></p>
+        <span class="meter" aria-hidden="true"><span style={`width:${Math.max(0, Math.min(100, p.score * 10))}%`}></span></span>
+      </div>
     )}
     <p class="best-for ui-small"><strong>Best for:</strong> {p.bestFor}</p>
   </header>
@@ -29,13 +30,13 @@ const { product: p, rank } = Astro.props;
   )}
   <div class="pc">
     {p.pros && p.pros.length > 0 && (
-      <div>
+      <div class="pc-box pros-box">
         <p class="pc-title">Pros</p>
         <ul class="pros">{p.pros.map((x) => <li>{x}</li>)}</ul>
       </div>
     )}
     {p.cons && p.cons.length > 0 && (
-      <div>
+      <div class="pc-box cons-box">
         <p class="pc-title">Cons</p>
         <ul class="cons">{p.cons.map((x) => <li>{x}</li>)}</ul>
       </div>
@@ -48,33 +49,44 @@ const { product: p, rank } = Astro.props;
   </div>
 </article>
 <style>
-  .product { padding: 1.25rem; margin: 2rem 0; scroll-margin-top: 6rem; }
-  h3 { margin: 0.2rem 0 0.35rem; font-size: 1.35rem; }
-  .best-for { margin: 0 0 1rem; }
-  .score { margin: 0 0 0.5rem; display: flex; align-items: baseline; gap: 0.15rem; flex-wrap: wrap; }
-  .score-num { font-family: var(--font-head); font-weight: 800; font-size: 1.5rem; color: var(--text); letter-spacing: -0.02em; }
-  .score-of { font-family: var(--font-head); font-weight: 600; color: var(--steel); margin-right: 0.5rem; }
-  .score-label { color: var(--steel); }
-  .fit-note { margin: 0.6rem 0 0; color: var(--steel); }
+  .product { padding: 1.15rem; margin: 2rem 0; scroll-margin-top: 6rem; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+  header { margin-bottom: 1rem; }
+  .eyebrow { margin: 0; }
+  h3 { margin: 0.25rem 0 0.6rem; font-size: clamp(1.2rem, 1.05rem + 0.8vw, 1.45rem); }
+  .score { display: grid; gap: 0.35rem; margin: 0 0 0.75rem; max-width: 22rem; }
+  .score-line { margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 0.15rem; font-family: var(--font-head); font-size: 0.85rem; color: var(--steel); }
+  .score-num { font-weight: 800; font-size: 1.75rem; line-height: 1; color: var(--text); letter-spacing: -0.03em; }
+  .score-of { font-weight: 600; color: var(--steel); margin-right: 0.5rem; }
+  .nowrap { white-space: nowrap; }
+  .meter { display: block; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .meter span { display: block; height: 100%; border-radius: inherit; background: var(--text); }
+  .best-for { margin: 0; font-size: 0.92rem; }
   .best-for strong { color: var(--text); font-weight: 600; }
-  .specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 0 0 1rem; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-  .specs div { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); }
+  .fit-note { margin: 0.6rem 0 0; color: var(--steel); }
+  .specs { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); margin: 0 0 1rem; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .specs div { padding: 0.6rem 0.75rem; box-shadow: 1px 0 0 var(--line), 0 1px 0 var(--line); }
   .specs dt { font-family: var(--font-head); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); }
-  .specs dd { margin: 0.1rem 0 0; font-family: var(--font-head); font-size: 0.92rem; font-weight: 600; }
-  .pc { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-bottom: 0.5rem; }
-  .pc-title { font-family: var(--font-head); font-weight: 700; font-size: 0.85rem; margin: 0 0 0.35rem; }
-  .pc ul { list-style: none; padding: 0; margin: 0; font-size: 1rem; }
-  .pc li { position: relative; padding-left: 1.5rem; margin: 0.35rem 0; line-height: 1.45; }
-  .pros li::before, .cons li::before { position: absolute; left: 0; top: 0; font-family: var(--font-head); font-weight: 700; }
-  .pros li::before { content: '+'; color: var(--text); }
-  .cons li::before { content: '–'; color: var(--steel); }
+  .specs dd { margin: 0.1rem 0 0; font-family: var(--font-head); font-size: 0.9rem; font-weight: 600; line-height: 1.35; }
+  .pc { display: grid; gap: 0.75rem; grid-template-columns: 1fr; margin-bottom: 0.5rem; }
+  .pc-box { border-radius: 8px; padding: 0.8rem 0.9rem; }
+  .pros-box { background: var(--good-bg); }
+  .cons-box { background: var(--bg); }
+  .pc-title { font-family: var(--font-head); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.35rem; }
+  .pros-box .pc-title { color: var(--good); }
+  .cons-box .pc-title { color: var(--steel); }
+  .pc ul { list-style: none; padding: 0; margin: 0; font-size: 0.98rem; }
+  .pc li { position: relative; padding-left: 1.4rem; margin: 0.4rem 0; line-height: 1.45; }
+  .pros li::before, .cons li::before { position: absolute; left: 0; top: 0; font-family: var(--font-head); font-weight: 800; }
+  .pros li::before { content: '+'; color: var(--good); }
+  .cons li::before { content: '\2212'; color: var(--steel); }
   .body :global(p) { margin: 0.75rem 0; }
   .cta-row { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
-  .cta-row :global(.amz-btn) { width: 100%; }
+  .cta-row :global(.amz-btn) { width: 100%; min-height: 50px; font-size: 1.02rem; }
   @media (min-width: 640px) {
     .product { padding: 1.75rem; }
-    .specs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .pc { grid-template-columns: 1fr 1fr; }
-    .cta-row :global(.amz-btn) { width: auto; }
+    .cta-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .cta-row :global(.amz-btn) { width: auto; min-width: 16rem; }
+    .fit-note { margin: 0; flex: 1 1 14rem; }
   }
 </style>

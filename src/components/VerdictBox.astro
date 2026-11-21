@@ -24,16 +24,22 @@ const { summary, picks } = Astro.props;
   )}
 </section>
 <style>
-  .verdict { padding: 1.25rem; margin: 1.5rem 0 2rem; }
+  .verdict { padding: 1.15rem; margin: 1.5rem 0 2rem; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+  .verdict .eyebrow { margin: 0; }
   .verdict h2 { margin: 0.15rem 0 0.5rem; font-size: 1.35rem; }
   .summary { margin: 0 0 1rem; }
   .picks { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-  .picks li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
+  .picks li { display: grid; grid-template-columns: 1fr; gap: 0.6rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
   .picks li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .picks li :global(.amz-btn) { width: 100%; }
   .pick-text { display: flex; flex-direction: column; min-width: 0; }
-  .label { font-family: var(--font-head); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--steel); font-weight: 600; }
-  .name { font-family: var(--font-head); font-weight: 650; font-size: 1rem; text-decoration: none; }
+  .label { font-family: var(--font-head); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--steel); font-weight: 600; }
+  .name { font-family: var(--font-head); font-weight: 650; font-size: 1rem; text-decoration: none; line-height: 1.35; }
   .name:hover { text-decoration: underline; }
-  .sc { color: var(--steel); font-weight: 600; }
+  .sc { color: var(--steel); font-weight: 600; white-space: nowrap; }
+  @media (min-width: 560px) {
+    .picks li { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1rem; }
+    .picks li :global(.amz-btn) { width: auto; }
+  }
   @media (min-width: 640px) { .verdict { padding: 1.75rem; } }
 </style>
