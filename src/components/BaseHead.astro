@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { SITE } from '../site.config';
+import { photoSrc, photoSrcset, PHOTO_SIZES } from '../lib/photos';
 import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import newsreaderLatin from '@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url';
 
@@ -13,9 +14,11 @@ interface Props {
   modifiedTime?: Date;
   noindex?: boolean;
   jsonLd?: Record<string, unknown>[];
+  /** Name of the hero photo to preload (the page's LCP image). */
+  preloadPhoto?: string;
 }
 
-const { title, description, image = SITE.ogImage, type = 'website', publishedTime, modifiedTime, noindex = false, jsonLd = [] } = Astro.props;
+const { title, description, image = SITE.ogImage, type = 'website', publishedTime, modifiedTime, noindex = false, jsonLd = [], preloadPhoto } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url).toString();
 const ogImage = new URL(image, Astro.site ?? SITE.url).toString();
 const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
@@ -23,6 +26,7 @@ const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{fullTitle}</title>
+{preloadPhoto && <link rel="preload" as="image" href={photoSrc(preloadPhoto, 1600)} imagesrcset={photoSrcset(preloadPhoto)} imagesizes={PHOTO_SIZES} fetchpriority="high" />}
 <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
 <link rel="preload" href={newsreaderLatin} as="font" type="font/woff2" crossorigin />
 <meta name="description" content={description} />

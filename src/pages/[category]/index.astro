@@ -5,6 +5,9 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import Illustration from '../../components/Illustration.astro';
 import { ILLUSTRATION_NOUN } from '../../lib/illustrations';
+import PhotoBackdrop from '../../components/PhotoBackdrop.astro';
+import PhotoCredit from '../../components/PhotoCredit.astro';
+import { photoForCategory } from '../../lib/photos';
 import { CATEGORIES, SITE } from '../../site.config';
 
 export function getStaticPaths() {
@@ -13,6 +16,7 @@ export function getStaticPaths() {
 const { cat } = Astro.props;
 const articles = (await getCollection('articles', ({ data }) => data.category === cat.slug && (import.meta.env.DEV || !data.draft)))
   .sort((a, b) => +(b.data.updatedDate ?? b.data.pubDate) - +(a.data.updatedDate ?? a.data.pubDate));
+const heroPhoto = photoForCategory(cat.slug);
 const site = Astro.site ?? new URL(SITE.url);
 const url = new URL(Astro.url.pathname, site).toString();
 const jsonLd = [
@@ -33,15 +37,18 @@ const jsonLd = [
   },
 ];
 ---
-<BaseLayout title={`${cat.name}: Buying Guides & Reviews`} description={cat.description} jsonLd={jsonLd} noindex={articles.length === 0}>
+<BaseLayout title={`${cat.name}: Buying Guides & Reviews`} description={cat.description} jsonLd={jsonLd} noindex={articles.length === 0} preloadPhoto={heroPhoto.name}>
   <div class="wrap">
     <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: cat.name, href: Astro.url.pathname }]} />
     <header class="banner" style={`--cat:${cat.color}`}>
+      <PhotoBackdrop photo={heroPhoto} />
+      <div class="shade" aria-hidden="true"></div>
       <div class="banner-text">
         <p class="kicker">Buying guides</p>
         <h1>{cat.name}</h1>
         <p class="lede">{cat.description}</p>
       </div>
+      <PhotoCredit photo={heroPhoto} />
       <div class="banner-art"><Illustration kind={cat.slug} accent={cat.color} slice label={`Illustration of ${(ILLUSTRATION_NOUN as Record<string, string>)[cat.slug] ?? 'car gear'}`} /></div>
     </header>
     {articles.length > 0 ? (
@@ -62,20 +69,35 @@ const jsonLd = [
   .banner {
     position: relative; display: grid; gap: 1rem; overflow: hidden; color: #fff;
     padding: clamp(1.25rem, 4vw, 2.25rem); border-radius: 16px;
-    background: radial-gradient(30rem 14rem at 100% 0%, color-mix(in srgb, var(--cat) 55%, transparent), transparent 70%), linear-gradient(150deg, var(--navy), var(--navy-2));
-    border-bottom: 5px solid var(--cat);
+    background: var(--navy); isolation: isolate;
+    border-bottom: 5px solid var(--cat); padding-bottom: clamp(2.5rem, 5vw, 3rem);
   }
-  .banner::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0.6rem; height: 3px; background: repeating-linear-gradient(90deg, rgba(251,191,36,.8) 0 30px, transparent 30px 54px); }
+  .shade {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(30rem 14rem at 100% 0%, color-mix(in srgb, var(--cat) 40%, transparent), transparent 70%),
+      linear-gradient(180deg, rgba(11, 31, 58, .8) 0%, rgba(11, 31, 58, .88) 100%);
+  }
+  @media (min-width: 760px) {
+    .shade {
+      background:
+        radial-gradient(30rem 14rem at 100% 0%, color-mix(in srgb, var(--cat) 40%, transparent), transparent 70%),
+        linear-gradient(90deg, rgba(11, 31, 58, .9) 0%, rgba(11, 31, 58, .76) 55%, rgba(11, 31, 58, .4) 100%);
+    }
+  }
+  .banner :global(.photo-credit) { bottom: 1.1rem; }
+  .banner-text { text-shadow: 0 1px 2px rgba(0, 0, 0, .3); }
+  .banner::after { content: ''; position: absolute; z-index: 1; left: 0; right: 0; bottom: 0.6rem; height: 3px; background: repeating-linear-gradient(90deg, rgba(251,191,36,.8) 0 30px, transparent 30px 54px); }
   .banner-text { position: relative; z-index: 1; max-width: var(--measure); }
   .kicker { margin: 0; font-family: var(--font-head); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #fbbf24; }
   .banner h1 { color: #fff; margin: 0.35rem 0 0.5rem; }
   .lede { font-size: clamp(1.05rem, 1rem + 0.4vw, 1.2rem); color: #dbe4f0; margin: 0 0 0.75rem; }
-  .banner-art { position: relative; z-index: 1; height: 8rem; border-radius: 12px; overflow: hidden; border: 3px solid rgba(255,255,255,.85); }
+  .banner-art { display: none; position: relative; z-index: 1; height: 8rem; border-radius: 12px; overflow: hidden; border: 3px solid rgba(255,255,255,.85); }
   .banner-art :global(.illo), .banner-art :global(svg) { width: 100%; height: 100%; }
   .banner :global(a) { color: #fff; }
   @media (min-width: 760px) {
     .banner { grid-template-columns: minmax(0, 1fr) clamp(14rem, 26vw, 19rem); align-items: center; }
-    .banner-art { height: auto; aspect-ratio: 16 / 10; transform: rotate(2deg); }
+    .banner-art { display: block; height: auto; aspect-ratio: 16 / 10; transform: rotate(2deg); }
   }
   .grid { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1.5rem; }
   .empty { padding: 1.5rem; margin-top: 1.5rem; max-width: var(--measure); }

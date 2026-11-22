@@ -3,6 +3,9 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import Illustration from '../components/Illustration.astro';
+import PhotoBackdrop from '../components/PhotoBackdrop.astro';
+import PhotoCredit from '../components/PhotoCredit.astro';
+import { PHOTOS } from '../lib/photos';
 import { CATEGORIES, SITE } from '../site.config';
 
 const articles = (await getCollection('articles', ({ data }) => import.meta.env.DEV || !data.draft))
@@ -25,8 +28,10 @@ const jsonLd = [
   },
 ];
 ---
-<BaseLayout title={`${SITE.name}: ${SITE.tagline}`} description={SITE.description} jsonLd={jsonLd}>
+<BaseLayout title={`${SITE.name}: ${SITE.tagline}`} description={SITE.description} jsonLd={jsonLd} preloadPhoto={PHOTOS.home.name}>
   <section class="hero">
+    <PhotoBackdrop photo={PHOTOS.home} position="62% 55%" />
+    <div class="shade" aria-hidden="true"></div>
     <div class="wrap hero-grid">
       <div class="hero-text">
         <p class="kicker">Car accessory buying guides</p>
@@ -40,12 +45,8 @@ const jsonLd = [
           </span>
         </div>
       </div>
-      <div class="hero-art" aria-hidden="true">
-        <div class="art a1"><Illustration kind="dash-cams" accent="#2563eb" label="" /></div>
-        <div class="art a2"><Illustration kind="jump-starters" accent="#f59e0b" label="" /></div>
-        <div class="art a3"><Illustration kind="tire-inflators" accent="#10b981" label="" /></div>
-      </div>
     </div>
+    <PhotoCredit photo={PHOTOS.home} />
   </section>
 
   <div class="wrap">
@@ -88,24 +89,36 @@ const jsonLd = [
   .hero {
     position: relative; overflow: hidden; color: #fff;
     padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(3rem, 7vw, 5rem);
+    background: var(--navy);
+    padding-bottom: clamp(4rem, 9vw, 6.5rem);
+  }
+  /* Dark brand overlay keeps white text well above WCAG AA on top of the photo */
+  .shade {
+    position: absolute; inset: 0; z-index: 0;
     background:
-      radial-gradient(40rem 22rem at 90% 10%, rgba(37, 99, 235, .45), transparent 60%),
-      radial-gradient(30rem 18rem at 0% 100%, rgba(245, 158, 11, .18), transparent 60%),
-      linear-gradient(160deg, #0b1f3a 0%, #12305a 100%);
+      radial-gradient(30rem 18rem at 0% 100%, rgba(245, 158, 11, .16), transparent 60%),
+      linear-gradient(180deg, rgba(11, 31, 58, .70) 0%, rgba(11, 31, 58, .82) 60%, rgba(11, 31, 58, .94) 100%);
+  }
+  @media (min-width: 900px) {
+    .shade {
+      background:
+        radial-gradient(30rem 18rem at 0% 100%, rgba(245, 158, 11, .14), transparent 60%),
+        linear-gradient(90deg, rgba(11, 31, 58, .94) 0%, rgba(11, 31, 58, .82) 40%, rgba(11, 31, 58, .3) 72%, rgba(18, 48, 90, .1) 100%);
+    }
   }
   /* Road-lane motif along the bottom edge */
   .hero::after {
-    content: ''; position: absolute; left: 0; right: 0; bottom: 1.25rem; height: 4px;
+    content: ''; position: absolute; z-index: 1; left: 0; right: 0; bottom: 1.25rem; height: 4px;
     background: repeating-linear-gradient(90deg, rgba(251, 191, 36, .85) 0 40px, transparent 40px 72px);
   }
   .hero::before {
-    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2.75rem;
+    content: ''; position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; height: 2.75rem;
     background: rgba(0, 0, 0, .18); border-top: 1px solid rgba(255, 255, 255, .06);
   }
   .hero-grid { position: relative; z-index: 1; display: grid; gap: 2rem; align-items: center; }
   .kicker { font-family: var(--font-head); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fbbf24; margin: 0; }
   .hero h1 { color: #fff; font-size: clamp(2.1rem, 1.4rem + 4vw, 3.9rem); letter-spacing: -0.035em; line-height: 1.04; margin: 0.6rem 0 1rem; text-wrap: balance; }
-  .hl { background: linear-gradient(90deg, #93c5fd, #60a5fa); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hl { text-shadow: none; background: linear-gradient(90deg, #93c5fd, #60a5fa); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .lede { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem); max-width: 36rem; color: #dbe4f0; margin: 0 0 1.75rem; }
   .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; }
   .btn-primary {
@@ -118,13 +131,12 @@ const jsonLd = [
   .links { display: inline-flex; flex-wrap: wrap; gap: 0 1.5rem; }
   .text-link { display: inline-flex; align-items: center; min-height: var(--tap); font-size: 0.95rem; font-weight: 600; color: #fff; text-decoration-color: #fbbf24; }
   .text-link:hover { color: #fbbf24; }
-  .hero-art { display: none; }
+  .hero :global(.photo-credit) { bottom: 3.1rem; }
+  .hero-text { max-width: 38rem; text-shadow: 0 1px 2px rgba(0, 0, 0, .35); }
   @media (max-width: 479px) { .btn-primary { width: 100%; } .links { width: 100%; justify-content: center; } }
   @media (min-width: 900px) {
-    .hero-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
-    .hero-art { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; transform: rotate(-2deg); }
-    .art { border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px -18px rgba(0, 0, 0, .6); border: 3px solid rgba(255, 255, 255, .9); }
-    .a1 { grid-column: 1 / -1; }
+    .hero { min-height: 34rem; display: flex; align-items: center; }
+    .hero-grid { width: 100%; }
   }
 
   section > h2 { margin-top: clamp(2rem, 5vw, 3rem); }
