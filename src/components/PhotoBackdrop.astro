@@ -1,0 +1,22 @@
+---
+/** Full-bleed hero photo with fixed dimensions (no layout shift). Place inside a position:relative container. */
+import { photoSrc, photoSrcset, PHOTO_SIZE, PHOTO_SIZES, type StockPhoto } from '../lib/photos';
+interface Props { photo: StockPhoto; priority?: boolean; position?: string }
+const { photo, priority = true, position = 'center' } = Astro.props;
+---
+<img
+  class="photo-bg"
+  src={photoSrc(photo.name, 1600)}
+  srcset={photoSrcset(photo.name)}
+  sizes={PHOTO_SIZES}
+  width={PHOTO_SIZE.width}
+  height={PHOTO_SIZE.height}
+  alt={photo.alt}
+  loading={priority ? 'eager' : 'lazy'}
+  fetchpriority={priority ? 'high' : 'auto'}
+  decoding={priority ? 'sync' : 'async'}
+  style={`object-position:${position}`}
+/>
+<style>
+  .photo-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+</style>
