@@ -1,0 +1,45 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { PHOTOS, photoSrc } from '../lib/photos';
+
+const usedOn: Record<string, string> = {
+  home: 'Home page',
+  'dash-cams-cockpit': 'Best front and rear dash cams',
+  'dash-cams-dashboard': 'Dash cams category and dash cam buying guide',
+  'car-interior': 'Floor mats and seat covers',
+  'tire-inflators': 'Tire inflators',
+  detailing: 'Detailing',
+  'jump-starters': 'Jump starters',
+  organization: 'Organization',
+  'vehicle-guides': 'Vehicle guides',
+};
+---
+<PageLayout
+  title="Photo Credits"
+  description="Credits for the free stock photos used in DriveTested banners."
+  lede="Banner photos come from Unsplash and Pexels. Both licenses allow free commercial use without attribution, but we credit the photographers anyway. Thank you."
+>
+  <ul class="credits">
+    {Object.values(PHOTOS).map((p) => (
+      <li>
+        <img src={photoSrc(p.name, 800)} alt={p.alt} width="160" height="90" loading="lazy" decoding="async" />
+        <div>
+          <p class="where">{usedOn[p.name] ?? ''}</p>
+          <p>Photo by <strong>{p.photographer}</strong> on <a href={p.source} rel="noopener" target="_blank">{p.platform}</a>{p.note ? ` (${p.note})` : ''}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+  <p class="small muted">
+    Product images on our guides are original DriveTested illustrations, not photos of the actual products, and we don't
+    use Amazon or manufacturer images.
+  </p>
+</PageLayout>
+<style>
+  .credits { list-style: none; padding: 0; margin: 1.5rem 0; display: grid; gap: 0.85rem; }
+  .credits li { display: flex; gap: 1rem; align-items: center; padding: 0; }
+  .credits img { width: 160px; height: 90px; object-fit: cover; border-radius: 8px; flex: none; }
+  .credits p { margin: 0; font-size: 1rem; }
+  .where { font-family: var(--font-head); font-size: 0.78rem !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--blue-700); }
+  @media (max-width: 420px) { .credits img { width: 110px; height: 62px; } }
+</style>
